@@ -132,33 +132,91 @@ namespace FEM2A {
     ElementMapping::ElementMapping( const Mesh& M, bool border, int i )
         : border_( border )
     {
-        std::cout << "[ElementMapping] constructor for element " << i << " ";
+        std::cout << "Test du constructeur ElementMapping pour l'element" << i << "  "<< std::endl;
+        std::cout << "Coordonnees des sommets :"<<std::endl;
         if ( border ) std::cout << "(border)";
-        std::cout << '\n';
         // TODO
+        // On détermine si l'élément est une frontière ou un triangle
+    // on extrait les sommets de l'élément i du maillage M
+    if (border) {
+        // Supposons que les bords sont constitués de 2 sommets
+        for (int v = 0; v<2; ++v) vertices_.push_back(M.get_edge_vertex(i, v));
+        for (int v = 0; v<2; ++v) std::cout << vertices_[v].x<<"  "<<vertices_[v].y<<std::endl;
+    }
+     else {
+        // Les triangles sont constitués de 3 sommets
+        for (int v = 0; v<3; ++v) vertices_.push_back(M.get_triangle_vertex(i, v));
+        for (int v = 0; v<3; ++v) std::cout << vertices_[v].x<<"  "<<vertices_[v].y<<std::endl;
+    }
     }
 
     vertex ElementMapping::transform( vertex x_r ) const
     {
-        std::cout << "[ElementMapping] transform reference to world space" << '\n';
+        //std::cout << "[ElementMapping] transform reference to world space" << '\n';
+        vertex r;
         // TODO
-        vertex r ;
+        if (border_) {
+            double xi = x_r.x;
+            r.x = (1-xi)*vertices_[0].x + xi*vertices_[1].x;
+            r.y = (1-xi)*vertices_[0].y + xi*vertices_[1].y;
+        }
+        else {
+            double xi = x_r.x ;
+            double eta = x_r.y ;
+            r.x = vertices_[0].x * (1 - xi - eta) + vertices_[1].x * xi + vertices_[2].x * eta;
+            r.y = vertices_[0].y * (1 - xi - eta) + vertices_[1].y * xi + vertices_[2].y * eta;
+        }
+     /*
+    // Supposons une interpolation affine pour un triangle
+    if (!border_) {
+        result.x = vertices_[0].x * x_r.x + vertices_[1].x * x_r.y + vertices_[2].x * (1 - x_r.x - x_r.y);
+        result.y = vertices_[0].y * x_r.x + vertices_[1].y * x_r.y + vertices_[2].y * (1 - x_r.x - x_r.y);
+    }*/
         return r ;
     }
 
     DenseMatrix ElementMapping::jacobian_matrix( vertex x_r ) const
     {
-        std::cout << "[ElementMapping] compute jacobian matrix" << '\n';
-        // TODO
+        //std::cout << "[ElementMapping] compute jacobian matrix" << '\n';
         DenseMatrix J ;
-        return J ;
-    }
+        if (border_) {
+            double dx_dxi = vertices_[1].x - vertices_[0].x;
+            double dy_dxi = -vertices_[0].y + vertices_[1].y;
+            J.set(0, 0, dx_dxi);
+            J.set(1, 0, dy_dxi);
+        }
+        else {
+            J.set_size(2,2);
+        // Calcul des dérivées partielles pour la transformation d'un triangle
+            double dx_dxi = vertices_[1].x - vertices_[0].x;   // ∂x/∂ξ = xB - xA
+            double dx_deta = vertices_[2].x - vertices_[0].x;  // ∂x/∂η = xC - xA
+            double dy_dxi = vertices_[1].y - vertices_[0].y;   // ∂y/∂ξ = yB - yA
+            double dy_deta = vertices_[2].y - vertices_[0].y;  // ∂y/∂η = yC - yA
+            J.set(0, 0, dx_dxi);
+            J.set(0, 1, dx_deta);
+            J.set(1, 0, dy_dxi);
+            J.set(1, 1, dy_deta);
+        }
+        return J;
+}
 
     double ElementMapping::jacobian( vertex x_r ) const
     {
-        std::cout << "[ElementMapping] compute jacobian determinant" << '\n';
+        //std::cout << "[ElementMapping] compute jacobian determinant" << '\n';
         // TODO
-        return 0. ;
+        DenseMatrix J = jacobian_matrix(x_r);
+        // Calculer et retourner le déterminant de J
+        if (border_) {
+            double det_J = J.get(0,0)*J.get(0,0)+J.get(1,0)*J.get(1,0);
+            return std::sqrt(det_J);
+        }
+        else {
+            return J.det_2x2();
+        }
+
+
+        //return J.det_2x2();
+        //return J(0, 0) * J(1, 1) - J(0, 1) * J(1, 0);
     }
 
     /****************************************************************/
@@ -167,29 +225,78 @@ namespace FEM2A {
     ShapeFunctions::ShapeFunctions( int dim, int order )
         : dim_( dim ), order_( order )
     {
-        std::cout << "[ShapeFunctions] constructor in dimension " << dim << '\n';
-        // TODO
+        bool SF_construct = true;
+        if (dim != 1 && dim != 2) {
+            std::cout << "ShapeFunctions are only implemented in 1D or 2D" << std::endl;
+            SF_construct = false;
+        }
+        if (order !=1) {
+            std::cout << "Only order -1 ShapeFunctions are implemented" << std::endl;
+            SF_construct = false ;
+        }
+        assert(SF_construct);
     }
 
     int ShapeFunctions::nb_functions() const
     {
-        std::cout << "[ShapeFunctions] number of functions" << '\n';
+        //std::cout << "[ShapeFunctions] number of functions" << '\n';
         // TODO
-        return 0 ;
+        //int nombre_fonction ;
+        if (dim_ == 1) {return 2;}
+        return 3;
     }
 
     double ShapeFunctions::evaluate( int i, vertex x_r ) const
     {
-        std::cout << "[ShapeFunctions] evaluate shape function " << i << '\n';
+        //std::cout << "[ShapeFunctions] evaluate shape function " << i << '\n';
         // TODO
+     if (dim_ == 1) {
+         double xi = x_r.x;
+         switch (i) {
+             case(0):
+                return 1 - xi;
+             case (1):
+                return xi;
+         }
+     }
+     else {
+         double xi = x_r.x; double eta = x_r.y;
+         switch (i) {
+                case (0): return 1 - xi - eta;
+                case (1): return xi;
+                case (2): return eta;
+            }
+        }
         return 0. ; // should not be reached
+
     }
 
     vec2 ShapeFunctions::evaluate_grad( int i, vertex x_r ) const
     {
-        std::cout << "[ShapeFunctions] evaluate gradient shape function " << i << '\n';
+        //std::cout << "[ShapeFunctions] evaluate gradient shape function " << i << '\n';
         // TODO
+
+        //on peut faire avec switch mais on doit mettre break
         vec2 g ;
+        if (dim_ == 1) {
+            if (i == 0){
+                g.x = -1;
+            }
+            if (i == 1) {
+                g.x = 1;
+            g.y = 0;}}
+        if (dim_ == 2) {
+            if (i == 0) {g.x = -1; g.y = -1;}
+            if (i == 1) {g.x = 1; g.y = 0;}
+            if (i == 2) {g.x = 0; g.y = 1;}
+        }
+
+        /*
+        double dx_dxi = vertices_[1].x - vertices_[0].x;   // ∂x/∂ξ = xB - xA
+        double dx_deta = vertices_[2].x - vertices_[0].x;  // ∂x/∂η = xC - xA
+        double dy_dxi = vertices_[1].y - vertices_[0].y;   // ∂y/∂ξ = yB - yA
+        double dy_deta = vertices_[2].y - vertices_[0].y;  // ∂y/∂η = yC - yA
+        */
         return g ;
     }
 
@@ -204,7 +311,25 @@ namespace FEM2A {
         DenseMatrix& Ke )
     {
         std::cout << "compute elementary matrix" << '\n';
-        // TODO
+        Ke.set_size(reference_functions.nb_functions(), reference_functions.nb_functions());
+
+        for (int i = 0; i < reference_functions.nb_functions(); ++i) {
+            for (int j = 0; j < reference_functions.nb_functions(); ++j) {
+                Ke.set(i,j,0.);
+                for (int q =0; q < quadrature.nb_points(); ++q) {
+                    vertex p_q = quadrature.point(q);
+                    double weight_q = quadrature.weight(q);
+                    double detJ = elt_mapping.jacobian(p_q);
+                    double k_value = coefficient(elt_mapping.transform(p_q));
+                    DenseMatrix inv_J = elt_mapping.jacobian_matrix(p_q).invert_2x2();
+                    vec2 grad_phi_i = inv_J.transpose().mult_2x2_2(reference_functions.evaluate_grad(i, p_q));
+                    vec2 grad_phi_j = inv_J.transpose().mult_2x2_2(reference_functions.evaluate_grad(j, p_q));
+                    double prod_scal = dot (grad_phi_i, grad_phi_j);
+                    double integral_value = prod_scal * detJ * weight_q * k_value;
+                    Ke.add(i,j,integral_value);
+                }
+            }
+        }
     }
 
     void local_to_global_matrix(
@@ -214,8 +339,20 @@ namespace FEM2A {
         SparseMatrix& K )
     {
         std::cout << "Ke -> K" << '\n';
-        // TODO
+        //K=size
+        //boucle sur les Ke
+        //for (int k=0; k<M.nb_triangles(); ++k) {
+            for (int local_i = 0; local_i<3; ++local_i) {
+                int global_i = M.get_triangle_vertex_index( t, local_i );
+                for (int local_j=0; local_j<3; ++local_j){
+                    int global_j = M.get_triangle_vertex_index( t, local_j );
+                    double value = Ke.get(local_i,local_j );
+                    K.add(global_i, global_j,value);
+                    }
+            }
+        //}
     }
+
 
     void assemble_elementary_vector(
         const ElementMapping& elt_mapping,
@@ -258,7 +395,24 @@ namespace FEM2A {
         std::vector< double >& F )
     {
         std::cout << "apply dirichlet boundary conditions" << '\n';
-        // TODO
+
+        double large_penalty = std::numeric_limits<double>::max() / 1e8; // Une grande valeur mais pas trop pour éviter l'overflow
+
+    // Supposer que M fournit un moyen d'itérer sur les attributs des bords et les nœuds associés
+    for (int i = 0; i < M.nb_vertices(); ++i) {
+        if (attribute_is_dirichlet[i]) {
+            // Pour chaque nœud avec condition de Dirichlet
+            for (int j = 0; j < K.nb_columns(); ++j) {
+                K.set(i, j, 0.0);  // Mise à zéro de la ligne entière
+                K.set(j, i, 0.0);  // Mise à zéro de la colonne entière
+            }
+            K.set(i, i, large_penalty);  // Mettre une grande valeur sur la diagonale
+            F[i] = values[i] * large_penalty;  // Ajuster le vecteur F
+        }
+    }
+
+    std::cout << "Dirichlet conditions applied.\n";
+
     }
 
     void solve_poisson_problem(

@@ -66,7 +66,7 @@ namespace FEM2A {
              *               If false, the element is a triangle.
              * \param i The index of the element in the mesh M
              */
-            ElementMapping( const Mesh& M, bool border, int i ) ;
+            ElementMapping( const Mesh& M, bool border, int i ); //constructeur
 
             /**
              * \brief Transforms a point from the reference element
