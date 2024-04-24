@@ -28,15 +28,26 @@ using namespace FEM2A;
 
 void run_tests()
 {
-    const bool t_opennl = true;
-    const bool t_lmesh = true;
-    const bool t_io = true;
-    const bool t_test = true;
+    const bool t_opennl = false;
+    const bool t_lmesh = false;
+    const bool t_io = false;
+    const bool t_test_quadrature = false;
+    const bool t_test_element_mapping = false;
+    const bool t_test_shapefunction = false;
+    const bool t_test_assemblary_matrix = false;
+    const bool t_test_local_to_global_matrix = false;
+    const bool t_test_assemblary_vector = true;
 
     if( t_opennl ) test_opennl();
-    //if( t_lmesh ) Tests::test_load_mesh();
-    //if( t_io ) Tests::test_load_save_mesh();
-    if( t_test) Tests::test_quadrature(2,false);
+    if( t_lmesh ) Tests::test_load_mesh();
+    if( t_io ) Tests::test_load_save_mesh();
+    if( t_test_quadrature) Tests::test_quadrature(2,false);
+    if( t_test_element_mapping) Tests::test_constructeur_elementmapping(4, false);
+    if (t_test_shapefunction) Tests::test_shapefunction();
+    if (t_test_assemblary_matrix) Tests::test_assemble_elementary_matrix (4, false);
+    if (t_test_local_to_global_matrix) Tests::test_local_to_global_matrix (4, false);
+    if (t_test_assemblary_vector) Tests::test_assemble_elementary_vector (4, false);
+
 }
 
 void run_simu()
