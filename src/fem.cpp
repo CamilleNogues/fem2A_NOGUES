@@ -464,12 +464,20 @@ namespace FEM2A
     void local_to_global_vector(
         const Mesh& M,
         bool border,
-        int i,
+        int t,
         std::vector< double >& Fe,
         std::vector< double >& F )
     {
         std::cout << "Fe -> F" << '\n';
         // TODO
+        //F.resize(10, 0.0);
+        for (int local_i = 0; local_i<Fe.size(); ++local_i)
+        {
+            int global_i = M.get_triangle_vertex_index( t, local_i );
+            double value = Fe[local_i];
+            F[global_i] = value;
+            std::cout <<  F[global_i]<< '\n';
+        }
     }
 
     void apply_dirichlet_boundary_conditions(

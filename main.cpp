@@ -36,7 +36,8 @@ void run_tests()
     const bool t_test_shapefunction = false;
     const bool t_test_assemblary_matrix = false;
     const bool t_test_local_to_global_matrix = false;
-    const bool t_test_assemblary_vector = true;
+    const bool t_test_assemblary_vector = false;
+    const bool t_test_local_to_global_vector = true;
 
     if( t_opennl ) test_opennl();
     if( t_lmesh ) Tests::test_load_mesh();
@@ -47,6 +48,7 @@ void run_tests()
     if (t_test_assemblary_matrix) Tests::test_assemble_elementary_matrix (4, false);
     if (t_test_local_to_global_matrix) Tests::test_local_to_global_matrix (4, false);
     if (t_test_assemblary_vector) Tests::test_assemble_elementary_vector (4, false);
+    if (t_test_local_to_global_vector) Tests::test_local_to_global_vector (4, false);
 
 }
 

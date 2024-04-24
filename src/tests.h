@@ -233,5 +233,39 @@ namespace FEM2A {
             }
     	    return true;
     	    }
+
+
+    	    bool test_local_to_global_vector (int elementIndex, bool Border) {
+            std::cout << "Testing local_to_global_vector\n";
+
+    	    Mesh mesh;
+            mesh.load("data/square.mesh");
+
+            vertex test_ver = {0.2,0.4};
+
+              // Création de l'objet ElementMapping
+            ElementMapping elt_mapping(mesh, Border, elementIndex);
+            // Création de l'objet shape function d'un triangle linéaire
+            ShapeFunctions reference_functions( 2, 1 );
+            // Création de l'objet quadrature
+            Quadrature Q;
+        	Q = Quadrature::get_quadrature(2, false);
+
+            //Création de la matrice Fe
+            std::vector< double > Fe;
+            assemble_elementary_vector(elt_mapping,reference_functions,Q,unit_fct,Fe);
+            std::vector< double > F;
+            F.resize(mesh.nb_triangles(),0.0);
+            int t = elementIndex;
+            local_to_global_vector(mesh, Border, t,Fe, F);
+
+            std::cout<<"K ? ?"<<std::endl;
+
+            for (int i = 0; i < F.size(); ++i) {
+            std::cout << F[i] <<std::endl;
+            }
+    	    return true;
+    	    }
+
     	}
 }
