@@ -272,7 +272,6 @@ namespace FEM2A
 
     double ShapeFunctions::evaluate( int i, vertex x_ref ) const
     {
-        //std::cout << "[ShapeFunctions] evaluate shape function " << i << '\n';
         if (dim_ == 1)
         {
             double xi = x_ref.x;
@@ -301,10 +300,6 @@ namespace FEM2A
 
     vec2 ShapeFunctions::evaluate_grad( int i, vertex x_r ) const
     {
-        //std::cout << "[ShapeFunctions] evaluate gradient shape function " << i << '\n';
-        // TODO
-
-        //on peut faire avec switch mais on doit mettre break
         vec2 g ;
         if (dim_ == 1)
         {
@@ -406,7 +401,6 @@ namespace FEM2A
 
         for (int i = 0; i < reference_functions.nb_functions(); ++i)
         {
-            //Fe.set(i,0.);
             for (int q =0; q < quadrature.nb_points(); ++q)
             {
                 vertex p_q = quadrature.point(q);
@@ -434,7 +428,6 @@ namespace FEM2A
 
         for (int i = 0; i < reference_functions_1D.nb_functions(); ++i)
         {
-            //Fe.set(i,0.);
             for (int q =0; q < quadrature_1D.nb_points(); ++q)
             {
                 vertex p_q = quadrature_1D.point(q);

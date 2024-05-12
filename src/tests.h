@@ -323,7 +323,7 @@ namespace FEM2A
             *        associated to a triangle defined by its ElementMapping due to the source term.
             */
             assemble_elementary_vector(elt_mapping,reference_functions,Q,unit_fct,Fe);
-            std::cout << "Elementary vector Fe : " << '\n';
+            std::cout << "Elementary vector Fe : " << std::endl;
             for (int i = 0; i < Fe.size(); ++i)
             {
                 std::cout << Fe[i] <<std::endl;
@@ -379,6 +379,7 @@ namespace FEM2A
                 assemble_elementary_vector(elt_mapping,reference_functions,Q,unit_fct,Fe);
                 F.resize(mesh.nb_triangles(),0.0);
             }
+            std::cout << "Fe -> F" << std::endl;
             local_to_global_vector(mesh, Border, elementIndex,Fe, F);
 
             return true;
@@ -389,31 +390,29 @@ namespace FEM2A
             std::cout << "[ASSEMBLE ELEMENTARY NEUMANN VECTOR TEST]" <<std::endl;
             Mesh mesh;
             mesh.load("data/square.mesh");
-
-            vertex test_ver = {0.2,0.4};
-
-            // Création de l'objet ElementMapping
+            /**
+            * \brief Creation of the ElementMapping object
+            */
             ElementMapping elt_mapping(mesh, Border, elementIndex);
-            // Création de l'objet shape function d'un segment linéaire
+            /**
+            * \brief Creation of the shape function object of a linear edge
+            */
             ShapeFunctions reference_functions( 1, 1 );
-            // Création de l'objet quadrature
+            /**
+            * \brief Creation of the quadrature object
+            */
             Quadrature Q;
             Q = Quadrature::get_quadrature(2, Border);
-
-            //Création du vecteur Fe
+            /**
+            * \brief Creation of the vector Fe
+            */
             std::vector< double > Fe;
-
-            //fonction source
-            double coefficient_f = unit_fct( test_ver );
-
-            //test de la fonction
-
-            std::cout<<"tout va bien fe ?"<<coefficient_f<<std::endl;
-            std::cout << "compute elementary vector Fe (neumann condition)" << '\n';
-
-
+            /**
+            * \brief Test of the assemble_elementary_vector method which computes the elementary vector Fe
+            *        associated to a triangle defined by its ElementMapping due to the source term.
+            */
             assemble_elementary_neumann_vector(elt_mapping,reference_functions,Q,unit_fct,Fe);
-
+            std::cout << "Elementary vector Fe 1D (neumann condition): " << std::endl;
             for (int i = 0; i < Fe.size(); ++i)
             {
                 std::cout << Fe[i] <<std::endl;

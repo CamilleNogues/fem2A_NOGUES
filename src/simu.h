@@ -183,7 +183,7 @@ namespace FEM2A
 
         }
 
-        void neumann_pb( const std::string& mesh_filename, bool verbose )
+        /*void neumann_pb( const std::string& mesh_filename, bool verbose )
         {
             std::cout << "Solving a Neumann problem" << std::endl;
             Mesh M;

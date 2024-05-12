@@ -38,8 +38,8 @@ void run_tests()
     const bool t_test_local_to_global_matrix = false;
     const bool t_test_apply_dirichlet_boundary_conditions = false;
     const bool t_test_assemblary_vector = false;
-    const bool t_test_local_to_global_vector = true;
-    const bool t_test_assemblary_neumann_vector = false;
+    const bool t_test_local_to_global_vector = false;
+    const bool t_test_assemblary_neumann_vector = true;
 
     if( t_opennl ) test_opennl();
     if( t_lmesh ) Tests::test_load_mesh();
@@ -48,12 +48,13 @@ void run_tests()
     if( t_test_element_mapping) Tests::test_elementmapping(4, true);//Test de la classe Element Mapping pour un segment
     if( t_test_element_mapping) Tests::test_elementmapping(4, false);//Test de la classe Element Mapping pour un triangle
     if (t_test_shapefunctions) Tests::test_shapefunctions(0);// Test of the 0-th shape function
-    if (t_test_assemblary_matrix) Tests::test_assemble_elementary_matrix (4, false);
+    if (t_test_assemblary_matrix) Tests::test_assemble_elementary_matrix (4, false);//Test of assemble_elementary_matrix
     if (t_test_local_to_global_matrix) Tests::test_local_to_global_matrix (4, false);
     const bool verbose = flag_is_used( "-v", arguments )
         || flag_is_used( "--verbose", arguments );
     if (t_test_apply_dirichlet_boundary_conditions) Tests::test_apply_dirichlet_boundary_conditions ("data/square.mesh", verbose);
     if (t_test_assemblary_vector) Tests::test_assemble_elementary_vector (4, false);
+    if (t_test_local_to_global_vector) Tests::test_local_to_global_vector (4, false);
     if (t_test_local_to_global_vector) Tests::test_local_to_global_vector (4, true);
     if (t_test_assemblary_neumann_vector) Tests::test_assemble_elementary_neumann_vector (4, true);
 
