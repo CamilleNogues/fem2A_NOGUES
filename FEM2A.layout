@@ -1,7 +1,31 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Debug" />
-	<File name="src\fem.cpp" open="1" top="0" tabpos="1">
-		<Cursor position="0" topLine="126" />
+	<File name="main.cpp" open="1" top="1" tabpos="8">
+		<Cursor position="2664" topLine="59" />
+	</File>
+	<File name="src\fem.cpp" open="1" top="0" tabpos="2">
+		<Cursor position="15266" topLine="453" />
+	</File>
+	<File name="src\fem.h" open="1" top="0" tabpos="1">
+		<Cursor position="6482" topLine="93" />
+	</File>
+	<File name="src\mesh.cpp" open="1" top="0" tabpos="6">
+		<Cursor position="2692" topLine="21" />
+	</File>
+	<File name="src\mesh.h" open="1" top="0" tabpos="5">
+		<Cursor position="718" topLine="27" />
+	</File>
+	<File name="src\simu.h" open="1" top="0" tabpos="9">
+		<Cursor position="4819" topLine="129" />
+	</File>
+	<File name="src\solver.cpp" open="1" top="0" tabpos="4">
+		<Cursor position="0" topLine="123" />
+	</File>
+	<File name="src\solver.h" open="1" top="0" tabpos="3">
+		<Cursor position="774" topLine="13" />
+	</File>
+	<File name="src\tests.h" open="1" top="0" tabpos="7">
+		<Cursor position="12751" topLine="324" />
 	</File>
 </CodeBlocks_layout_file>

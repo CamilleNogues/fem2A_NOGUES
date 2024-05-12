@@ -24,6 +24,7 @@ namespace FEM2A {
             vertex get_edge_vertex( int edge_index, int vertex_local_index ) const ;
             vertex get_triangle_vertex( int triangle_index, int vertex_local_index ) const ;
 
+
             int get_edge_vertex_index( int edge_index, int vertex_local_index ) const ;
             int get_triangle_vertex_index( int triangle_index, int vertex_local_index ) const ;
 

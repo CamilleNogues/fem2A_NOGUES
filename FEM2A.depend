@@ -1,0 +1,83 @@
+# depslib dependency file v1.0
+1715534054 source:d:\femv2\fem2a_nogues\src\fem.cpp
+	"fem.h"
+	"mesh.h"
+	<iomanip>
+	<iostream>
+	<cmath>
+	<limits>
+	<stdlib.h>
+	<assert.h>
+
+1713282742 d:\femv2\fem2a_nogues\src\fem.h
+	"mesh.h"
+	"solver.h"
+	<assert.h>
+	<string>
+	<vector>
+
+1714406594 d:\femv2\fem2a_nogues\src\mesh.h
+	<vector>
+	<string>
+
+1713308142 d:\femv2\fem2a_nogues\src\solver.h
+	"mesh.h"
+
+1713308142 source:d:\femv2\fem2a_nogues\src\mesh.cpp
+	"mesh.h"
+	<cassert>
+	<fstream>
+	<iostream>
+
+1713308142 source:d:\femv2\fem2a_nogues\src\solver.cpp
+	"solver.h"
+	<assert.h>
+	<iostream>
+	<iomanip>
+	<cmath>
+	<algorithm>
+	<stdlib.h>
+	"../third_party/OpenNL_psm.h"
+
+1713308142 d:\femv2\fem2a_nogues\third_party\opennl_psm.h
+
+1713308142 source:d:\femv2\fem2a_nogues\third_party\opennl_psm.c
+	"OpenNL_psm.h"
+	<stdlib.h>
+	<string.h>
+	<stdio.h>
+	<math.h>
+	<windows.h>
+	<sys/types.h>
+	<sys/times.h>
+	<dlfcn.h>
+
+1715533496 source:d:\femv2\fem2a_nogues\main.cpp
+	<iostream>
+	<string>
+	<vector>
+	"src/fem.h"
+	"src/mesh.h"
+	"src/solver.h"
+	"src/tests.h"
+	"src/simu.h"
+
+1715533734 d:\femv2\fem2a_nogues\src\tests.h
+	"mesh.h"
+	"fem.h"
+	"solver.h"
+	"simu.h"
+	<assert.h>
+	<iostream>
+	<iomanip>
+	<cmath>
+	<algorithm>
+	<stdlib.h>
+
+1715425784 d:\femv2\fem2a_nogues\src\simu.h
+	"mesh.h"
+	"fem.h"
+	<math.h>
+	<cmath>
+	<iostream>
+

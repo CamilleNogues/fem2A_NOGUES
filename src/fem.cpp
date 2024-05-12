@@ -157,68 +157,62 @@ namespace FEM2A
     ElementMapping::ElementMapping( const Mesh& M, bool border, int i )
             : border_( border )
     {
-        std::cout << "Test du constructeur ElementMapping pour l'element" << i << "  "<< std::endl;
-        std::cout << "Coordonnees des sommets :"<<std::endl;
-        if ( border ) std::cout << "(border)";
-        // TODO
-        // On détermine si l'élément est une frontière ou un triangle
-        // on extrait les sommets de l'élément i du maillage M
-        if (border)
+        /*Element Mapping constructor */
+        if ( border )
         {
-            // Supposons que les bords sont constitués de 2 sommets
-            for (int v = 0; v<2; ++v) vertices_.push_back(M.get_edge_vertex(i, v));
-            for (int v = 0; v<2; ++v) std::cout << vertices_[v].x<<"  "<<vertices_[v].y<<std::endl;
+            for (int v = 0; v<2; ++v) vertices_.push_back(M.get_edge_vertex(i, v)); //on remplie le vecteur vertices_
+            /*Pour tester le constructeur, décommenter les lignes suivantes :*/
+//            std::cout << "L'element est un segment."<<std::endl;
+//            std::cout << "Coordonnees des sommets :"<<std::endl;
+//            for (int v = 0; v<2; ++v) {std::cout << "v"<<v<<"  :  " <<vertices_[v].x<<"  "<<vertices_[v].y<<std::endl;}
         }
         else
         {
-            // Les triangles sont constitués de 3 sommets
             for (int v = 0; v<3; ++v) vertices_.push_back(M.get_triangle_vertex(i, v));
-            for (int v = 0; v<3; ++v) std::cout << vertices_[v].x<<"  "<<vertices_[v].y<<std::endl;
+            /*Pour tester le constructeur, décommenter les lignes suivantes :*/
+//            std::cout << "L'element est un triangle."<<std::endl;
+//            std::cout << "Coordonnees des sommets :"<<std::endl;
+//            for (int v = 0; v<3; ++v) {std::cout << "v"<<v<<"  :  "<<vertices_[v].x<<"  "<<vertices_[v].y<<std::endl;}
         }
     }
 
-    vertex ElementMapping::transform( vertex x_r ) const
+    vertex ElementMapping::transform( vertex x_ref ) const
     {
-        //std::cout << "[ElementMapping] transform reference to world space" << '\n';
-        vertex r;
-        // TODO
+        vertex x_global;
         if (border_)
         {
-            double xi = x_r.x;
-            r.x = (1-xi)*vertices_[0].x + xi*vertices_[1].x;
-            r.y = (1-xi)*vertices_[0].y + xi*vertices_[1].y;
+            //For an edge
+            double xi = x_ref.x;
+            x_global.x = (1-xi)*vertices_[0].x + xi*vertices_[1].x;
+            x_global.y = (1-xi)*vertices_[0].y + xi*vertices_[1].y;
         }
         else
         {
-            double xi = x_r.x ;
-            double eta = x_r.y ;
-            r.x = vertices_[0].x * (1 - xi - eta) + vertices_[1].x * xi + vertices_[2].x * eta;
-            r.y = vertices_[0].y * (1 - xi - eta) + vertices_[1].y * xi + vertices_[2].y * eta;
+            //For a triangle
+            double xi = x_ref.x ;
+            double eta = x_ref.y ;
+            x_global.x = vertices_[0].x * (1 - xi - eta) + vertices_[1].x * xi + vertices_[2].x * eta;
+            x_global.y = vertices_[0].y * (1 - xi - eta) + vertices_[1].y * xi + vertices_[2].y * eta;
         }
-        /*
-        // Supposons une interpolation affine pour un triangle
-        if (!border_) {
-           result.x = vertices_[0].x * x_r.x + vertices_[1].x * x_r.y + vertices_[2].x * (1 - x_r.x - x_r.y);
-           result.y = vertices_[0].y * x_r.x + vertices_[1].y * x_r.y + vertices_[2].y * (1 - x_r.x - x_r.y);
-        }*/
-        return r ;
+        return x_global;
     }
 
     DenseMatrix ElementMapping::jacobian_matrix( vertex x_r ) const
     {
-        //std::cout << "[ElementMapping] compute jacobian matrix" << '\n';
         DenseMatrix J ;
         if (border_)
         {
-            double dx_dxi = vertices_[1].x - vertices_[0].x;
-            double dy_dxi = -vertices_[0].y + vertices_[1].y;
+            // Calculation of partial derivatives for the transformation of an edge
+            J.set_size(2,1);
+            double dx_dxi = -vertices_[0].x + vertices_[1].x; // ∂x/∂ξ = xB - xA
+            double dy_dxi = -vertices_[0].y + vertices_[1].y;// ∂y/∂ξ = yB - yA
             J.set(0, 0, dx_dxi);
             J.set(1, 0, dy_dxi);
         }
         else
         {
             J.set_size(2,2);
-            // Calcul des dérivées partielles pour la transformation d'un triangle
+            // Calculation of partial derivatives for the transformation of a triangle
             double dx_dxi = vertices_[1].x - vertices_[0].x;   // ∂x/∂ξ = xB - xA
             double dx_deta = vertices_[2].x - vertices_[0].x;  // ∂x/∂η = xC - xA
             double dy_dxi = vertices_[1].y - vertices_[0].y;   // ∂y/∂ξ = yB - yA
@@ -233,10 +227,8 @@ namespace FEM2A
 
     double ElementMapping::jacobian( vertex x_r ) const
     {
-        //std::cout << "[ElementMapping] compute jacobian determinant" << '\n';
-        // TODO
         DenseMatrix J = jacobian_matrix(x_r);
-        // Calculer et retourner le déterminant de J
+        // Calculate and return the determinant of J
         if (border_)
         {
             double det_J = J.get(0,0)*J.get(0,0)+J.get(1,0)*J.get(1,0);
@@ -246,10 +238,6 @@ namespace FEM2A
         {
             return J.det_2x2();
         }
-
-
-        //return J.det_2x2();
-        //return J(0, 0) * J(1, 1) - J(0, 1) * J(1, 0);
     }
 
     /****************************************************************/
@@ -274,9 +262,7 @@ namespace FEM2A
 
     int ShapeFunctions::nb_functions() const
     {
-        //std::cout << "[ShapeFunctions] number of functions" << '\n';
-        // TODO
-        //int nombre_fonction ;
+        //number of shape functions
         if (dim_ == 1)
         {
             return 2;
@@ -284,13 +270,12 @@ namespace FEM2A
         return 3;
     }
 
-    double ShapeFunctions::evaluate( int i, vertex x_r ) const
+    double ShapeFunctions::evaluate( int i, vertex x_ref ) const
     {
         //std::cout << "[ShapeFunctions] evaluate shape function " << i << '\n';
-        // TODO
         if (dim_ == 1)
         {
-            double xi = x_r.x;
+            double xi = x_ref.x;
             switch (i)
             {
             case(0):
@@ -301,8 +286,8 @@ namespace FEM2A
         }
         else
 {
-            double xi = x_r.x;
-            double eta = x_r.y;
+            double xi = x_ref.x;
+            double eta = x_ref.y;
             switch (i)
             {
             case (0): return 1 - xi - eta;
@@ -326,6 +311,7 @@ namespace FEM2A
             if (i == 0)
             {
                 g.x = -1;
+                g.y = 0;
             }
             if (i == 1)
             {
@@ -351,13 +337,6 @@ namespace FEM2A
                 g.y = 1;
             }
         }
-
-        /*
-        double dx_dxi = vertices_[1].x - vertices_[0].x;   // ∂x/∂ξ = xB - xA
-        double dx_deta = vertices_[2].x - vertices_[0].x;  // ∂x/∂η = xC - xA
-        double dy_dxi = vertices_[1].y - vertices_[0].y;   // ∂y/∂ξ = yB - yA
-        double dy_deta = vertices_[2].y - vertices_[0].y;  // ∂y/∂η = yC - yA
-        */
         return g ;
     }
 
@@ -371,7 +350,6 @@ namespace FEM2A
         double (*coefficient)(vertex),
         DenseMatrix& Ke )
     {
-        std::cout << "compute elementary matrix" << '\n';
         Ke.set_size(reference_functions.nb_functions(), reference_functions.nb_functions());
 
         for (int i = 0; i < reference_functions.nb_functions(); ++i)
@@ -402,10 +380,6 @@ namespace FEM2A
         const DenseMatrix& Ke,
         SparseMatrix& K )
     {
-        std::cout << "Ke -> K" << '\n';
-        //K=size
-        //boucle sur les Ke
-        //for (int k=0; k<M.nb_triangles(); ++k) {
         for (int local_i = 0; local_i<Ke.height(); ++local_i)
         {
             int global_i = M.get_triangle_vertex_index( t, local_i );
@@ -415,9 +389,10 @@ namespace FEM2A
                 double value = Ke.get(local_i,local_j );
                 K.add(global_i, global_j,value);
             }
+            //std::cout<<"Le numero global du point "<<local_i<<" est "<<global_i<<std::endl;
         }
-        //}
     }
+
 
 
     void assemble_elementary_vector(
@@ -427,13 +402,11 @@ namespace FEM2A
         double (*source)(vertex),
         std::vector< double >& Fe )
     {
-        std::cout << "compute elementary vector (source term)" << '\n';
-        // TODO
         Fe.resize(reference_functions.nb_functions(), 0.0);
 
         for (int i = 0; i < reference_functions.nb_functions(); ++i)
-    {
-        //Fe.set(i,0.);
+        {
+            //Fe.set(i,0.);
             for (int q =0; q < quadrature.nb_points(); ++q)
             {
                 vertex p_q = quadrature.point(q);
@@ -457,8 +430,26 @@ namespace FEM2A
         double (*neumann)(vertex),
         std::vector< double >& Fe )
     {
-        std::cout << "compute elementary vector (neumann condition)" << '\n';
-        // TODO
+        Fe.resize(reference_functions_1D.nb_functions(), 0.0);
+
+        for (int i = 0; i < reference_functions_1D.nb_functions(); ++i)
+        {
+            //Fe.set(i,0.);
+            for (int q =0; q < quadrature_1D.nb_points(); ++q)
+            {
+                vertex p_q = quadrature_1D.point(q);
+                double weight_q = quadrature_1D.weight(q);
+                double detJ = elt_mapping_1D.jacobian(p_q);
+
+                double f_value = neumann(elt_mapping_1D.transform(p_q));
+
+                double phi_i = reference_functions_1D.evaluate(i, p_q);
+
+                double integral_value = weight_q * phi_i * f_value * detJ;
+                Fe[i] += integral_value;
+            }
+        }
+
     }
 
     void local_to_global_vector(
@@ -468,15 +459,15 @@ namespace FEM2A
         std::vector< double >& Fe,
         std::vector< double >& F )
     {
-        std::cout << "Fe -> F" << '\n';
-        // TODO
-        //F.resize(10, 0.0);
+        //std::cout << "Fe -> F" << std::endl;
         for (int local_i = 0; local_i<Fe.size(); ++local_i)
         {
-            int global_i = M.get_triangle_vertex_index( t, local_i );
+            int global_i;
+            if (border == true) {global_i = M.get_edge_vertex_index( t, local_i );}
+            else {global_i = M.get_triangle_vertex_index( t, local_i );}
             double value = Fe[local_i];
             F[global_i] = value;
-            std::cout <<  F[global_i]<< '\n';
+            std::cout<<"Le numero global du point "<<local_i<<" est "<<global_i<<std::endl;
         }
     }
 
@@ -488,22 +479,6 @@ namespace FEM2A
         std::vector< double >& F )
     {
         std::cout << "apply dirichlet boundary conditions" << '\n';
-
-        //double large_penalty = std::numeric_limits<double>::max() / 1e8; // Une grande valeur mais pas trop pour éviter l'overflow
-
-        // Supposer que M fournit un moyen d'itérer sur les attributs des bords et les nœuds associés
-        /*for (int i = 0; i < M.nb_vertices(); ++i) {
-            if (attribute_is_dirichlet[i]) {
-                // Pour chaque nœud avec condition de Dirichlet
-                for (int j = 0; j < K.nb_columns(); ++j) {
-                    K.set(i, j, 0.0);  // Mise à zéro de la ligne entière
-                    K.set(j, i, 0.0);  // Mise à zéro de la colonne entière
-                }
-                K.set(i, i, large_penalty);  // Mettre une grande valeur sur la diagonale
-                F[i] = values[i] * large_penalty;  // Ajuster le vecteur F
-            }
-        }
-        */
 
         std::vector< bool > processed_vertices(values.size(), false);
         double penalty_coefficient = 10000.;

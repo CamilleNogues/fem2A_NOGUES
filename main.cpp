@@ -33,35 +33,50 @@ void run_tests()
     const bool t_io = false;
     const bool t_test_quadrature = false;
     const bool t_test_element_mapping = false;
-    const bool t_test_shapefunction = false;
+    const bool t_test_shapefunctions = false;
     const bool t_test_assemblary_matrix = false;
     const bool t_test_local_to_global_matrix = false;
+    const bool t_test_apply_dirichlet_boundary_conditions = false;
     const bool t_test_assemblary_vector = false;
     const bool t_test_local_to_global_vector = true;
+    const bool t_test_assemblary_neumann_vector = false;
 
     if( t_opennl ) test_opennl();
     if( t_lmesh ) Tests::test_load_mesh();
     if( t_io ) Tests::test_load_save_mesh();
-    if( t_test_quadrature) Tests::test_quadrature(2,false);
-    if( t_test_element_mapping) Tests::test_constructeur_elementmapping(4, false);
-    if (t_test_shapefunction) Tests::test_shapefunction();
+    if( t_test_quadrature) Tests::test_quadrature(2,false); //Test of the quadrature of a triangle to order 2
+    if( t_test_element_mapping) Tests::test_elementmapping(4, true);//Test de la classe Element Mapping pour un segment
+    if( t_test_element_mapping) Tests::test_elementmapping(4, false);//Test de la classe Element Mapping pour un triangle
+    if (t_test_shapefunctions) Tests::test_shapefunctions(0);// Test of the 0-th shape function
     if (t_test_assemblary_matrix) Tests::test_assemble_elementary_matrix (4, false);
     if (t_test_local_to_global_matrix) Tests::test_local_to_global_matrix (4, false);
+    const bool verbose = flag_is_used( "-v", arguments )
+        || flag_is_used( "--verbose", arguments );
+    if (t_test_apply_dirichlet_boundary_conditions) Tests::test_apply_dirichlet_boundary_conditions ("data/square.mesh", verbose);
     if (t_test_assemblary_vector) Tests::test_assemble_elementary_vector (4, false);
-    if (t_test_local_to_global_vector) Tests::test_local_to_global_vector (4, false);
+    if (t_test_local_to_global_vector) Tests::test_local_to_global_vector (4, true);
+    if (t_test_assemblary_neumann_vector) Tests::test_assemble_elementary_neumann_vector (4, true);
 
 }
 
 void run_simu()
 {
 
-    const bool simu_pure_dirichlet = true;
+    const bool s_pure_dirichlet_pb = true;
+    const bool s_source_dirichlet_pb = false;
+    const bool s_sinus_bump_dirichlet_pb = false;
 
     const bool verbose = flag_is_used( "-v", arguments )
         || flag_is_used( "--verbose", arguments );
 
-    if( simu_pure_dirichlet ) {
+    if( s_pure_dirichlet_pb ) {
+        Simu::pure_dirichlet_pb("data/mug_1.mesh", verbose);
+    }
+    if( s_source_dirichlet_pb ) {
         Simu::source_dirichlet_pb("data/square_fine.mesh", verbose);
+    }
+    if( s_sinus_bump_dirichlet_pb ) {
+        Simu::sinus_bump_dirichlet_pb("data/square.mesh", verbose);
     }
 }
 
