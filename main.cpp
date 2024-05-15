@@ -71,7 +71,7 @@ void run_simu()
         || flag_is_used( "--verbose", arguments );
 
     if( s_pure_dirichlet_pb ) {
-        Simu::pure_dirichlet_pb("data/mug_1.mesh", verbose);
+        Simu::pure_dirichlet_pb("data/square.mesh", verbose);
     }
     if( s_source_dirichlet_pb ) {
         Simu::source_dirichlet_pb("data/square_fine.mesh", verbose);
