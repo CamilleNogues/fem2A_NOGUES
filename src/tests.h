@@ -289,6 +289,8 @@ namespace FEM2A
                 imposed_values[i] = xy_fct(M.get_vertex(i));
             }
             apply_dirichlet_boundary_conditions(M, att_is_dirichlet, imposed_values, K_glob, F_glob);
+            std::vector< double > x(M.nb_vertices(), 0);
+
             K_glob.print();
             return true;
         }

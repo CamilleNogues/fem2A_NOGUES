@@ -26,7 +26,6 @@ Liste des commandes :
 -t (pour les tests)
 -s (pour les simulations)
 -h (pour obtenir de l'aide)
--v (pour print les versions verbosées avec beaucoup de détails)
 
 ### Tests
 Pour tester les fonctions du code :

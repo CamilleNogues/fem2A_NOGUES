@@ -36,10 +36,10 @@ void run_tests()
     const bool t_test_shapefunctions = false;
     const bool t_test_assemblary_matrix = false;
     const bool t_test_local_to_global_matrix = false;
-    const bool t_test_apply_dirichlet_boundary_conditions = false;
+    const bool t_test_apply_dirichlet_boundary_conditions = true;
     const bool t_test_assemblary_vector = false;
     const bool t_test_local_to_global_vector = false;
-    const bool t_test_assemblary_neumann_vector = true;
+    const bool t_test_assemblary_neumann_vector = false;
 
     if( t_opennl ) test_opennl();
     if( t_lmesh ) Tests::test_load_mesh();
@@ -65,7 +65,8 @@ void run_simu()
 
     const bool s_pure_dirichlet_pb = false;
     const bool s_source_dirichlet_pb = false;
-    const bool s_sinus_bump_dirichlet_pb = true;
+    const bool s_sinus_bump_dirichlet_pb = false;
+    const bool s_sinus_bump_analytic_pb = true;
 
     const bool verbose = flag_is_used( "-v", arguments )
         || flag_is_used( "--verbose", arguments );
@@ -78,6 +79,9 @@ void run_simu()
     }
     if( s_sinus_bump_dirichlet_pb ) {
         Simu::sinus_bump_dirichlet_pb("data/square_fine.mesh", verbose);
+    }
+    if( s_sinus_bump_analytic_pb ) {
+        Simu::sinus_bump_pb_analytic("data/square.mesh", verbose);
     }
 }
 
