@@ -33,7 +33,7 @@ Pour tester les fonctions du code :
 - choisir les fonctions à tester dans main.cpp/run_tests()
 - définir les booléens test (t_nomfonction) sur true pour lancer le test, false sinon
 
-/!\ Attention /!\
+/!\ Attention
 Pour les tests de certaines fonctions, il est nécessaire de décommenter des lignes directement dans le fichier src\fem.cpp. C'est le cas pour :
 - test du constructeur de ElementMapping
 - test de la fonction local_to_global_matrix
