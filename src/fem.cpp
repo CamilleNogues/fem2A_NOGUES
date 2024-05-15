@@ -460,7 +460,7 @@ namespace FEM2A
             else {global_i = M.get_triangle_vertex_index( t, local_i );}
             double value = Fe[local_i];
             F[global_i] = value;
-            std::cout<<"Le numero global du point "<<local_i<<" est "<<global_i<<std::endl;
+            //std::cout<<"Le numero global du point "<<local_i<<" est "<<global_i<<std::endl;
         }
     }
 

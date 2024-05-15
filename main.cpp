@@ -63,21 +63,21 @@ void run_tests()
 void run_simu()
 {
 
-    const bool s_pure_dirichlet_pb = true;
+    const bool s_pure_dirichlet_pb = false;
     const bool s_source_dirichlet_pb = false;
-    const bool s_sinus_bump_dirichlet_pb = false;
+    const bool s_sinus_bump_dirichlet_pb = true;
 
     const bool verbose = flag_is_used( "-v", arguments )
         || flag_is_used( "--verbose", arguments );
 
     if( s_pure_dirichlet_pb ) {
-        Simu::pure_dirichlet_pb("data/square.mesh", verbose);
+        Simu::pure_dirichlet_pb("data/square_fine.mesh", verbose);
     }
     if( s_source_dirichlet_pb ) {
-        Simu::source_dirichlet_pb("data/square_fine.mesh", verbose);
+        Simu::source_dirichlet_pb("data/square.mesh", verbose);
     }
     if( s_sinus_bump_dirichlet_pb ) {
-        Simu::sinus_bump_dirichlet_pb("data/square.mesh", verbose);
+        Simu::sinus_bump_dirichlet_pb("data/square_fine.mesh", verbose);
     }
 }
 

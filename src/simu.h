@@ -169,7 +169,7 @@ namespace FEM2A
             //Résolution du Système Linéaire et Exportation
             std::vector<double> u(M.nb_vertices());
             solve(K_glob, F_glob, u);
-            std::string export_name = "source_dirichlet";
+            std::string export_name = "sinus_bump_dirichlet";
             M.save(export_name+".mesh");
             save_solution(u, export_name+".bb");
 
